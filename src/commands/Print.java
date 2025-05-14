@@ -1,26 +1,29 @@
 package commands;
 
-import interfaces.IArgumentExtractor;
 import interfaces.ICommand;
+import interfaces.IArgumentExtractor;
 import interpreter.Variable;
 import interpreter.VariableStore;
 
 import java.util.List;
 import java.util.regex.Matcher;
 
-public class Set implements ICommand, IArgumentExtractor {
+public class Print implements ICommand, IArgumentExtractor {
 
     @Override
     public List<String> extract(Matcher matcher) {
-        return List.of(matcher.group(1), matcher.group(2));
+        return List.of(matcher.group(1));
     }
 
     @Override
     public void execute(List<String> args, VariableStore store) {
         String varName = args.getFirst();
-        String rawValue = args.getLast();
+        Variable value = store.get(varName);
 
-        Variable variable = Variable.fromString(rawValue);
-        store.set(varName, variable);
+        if (value != null) {
+            System.out.println(value.value);
+        } else {
+            System.out.println("Variable not found: " + varName);
+        }
     }
 }

@@ -5,7 +5,7 @@ public class FileReader {
     public static List<String> readFile(String fileName) {
         try {
 
-            java.nio.file.Path filePath = java.nio.file.Paths.get("./" + fileName);
+            java.nio.file.Path filePath = java.nio.file.Paths.get("./src/" + fileName + ".txt");
             return java.nio.file.Files.readAllLines(filePath);
 
         } catch (IOException err) {

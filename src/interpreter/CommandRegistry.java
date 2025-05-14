@@ -1,30 +1,26 @@
 package interpreter;
 
+import commands.Print;
+import commands.Set;
 import interfaces.ICommand;
+import interfaces.IArgumentExtractor;
 
 import java.util.HashMap;
-import java.util.List;
+import java.util.regex.Pattern;
 
 public class CommandRegistry {
 
     private static final HashMap<String, CommandDefinition> commands = new HashMap<>();
 
-    public static void register(CommandDefinition command) {
-        commands.put(command.getName(), command);
+    static {
+        register("set", "^set\\s+([a-zA-Z_]\\w*)\\s*=\\s*(.+)$", new Set(), new Set());
+        register("print", "^print\\s+(.+)$", new Print(), new Print());
     }
 
-    public static void executeCommand(ParsedCommand parsedCommand, VariableStore variables) {
-        CommandDefinition commandDefinition = commands.get(parsedCommand.getName());
-
-        if (commandDefinition == null) {
-            System.out.println("Erro: Comando \"" + parsedCommand.getName() + "\" não encontrado");
-            return;
-        }
-
-        ICommand command = commandDefinition.getCommand();
-        List<String> args = parsedCommand.getArgs();
-
-        command.execute(args, variables);
+    private static void register(String name, String regex, ICommand command, IArgumentExtractor extractor) {
+        Pattern pattern = Pattern.compile(regex);
+        CommandDefinition def = new CommandDefinition(name, pattern, extractor, command);
+        commands.put(name, def);
     }
 
     public static CommandDefinition getCommandDefinition(String name) {
