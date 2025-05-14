@@ -14,7 +14,7 @@ public class CommandRegistry {
 
     static {
         register("set", "^set\\s+([a-zA-Z_]\\w*)\\s*=\\s*(.+)$", new Set(), new Set());
-        register("print", "^print\\s+(.+)$", new Print(), new Print());
+        register("print", "^print\\s*\\(\\s*(.+?)\\s*\\)$", new Print(), new Print());
     }
 
     private static void register(String name, String regex, ICommand command, IArgumentExtractor extractor) {

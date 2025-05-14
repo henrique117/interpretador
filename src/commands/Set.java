@@ -16,11 +16,13 @@ public class Set implements ICommand, IArgumentExtractor {
     }
 
     @Override
-    public void execute(List<String> args, VariableStore store) {
+    public boolean execute(List<String> args, VariableStore store) {
         String varName = args.getFirst();
         String rawValue = args.getLast();
 
         Variable variable = Variable.fromString(rawValue);
         store.set(varName, variable);
+
+        return false;
     }
 }

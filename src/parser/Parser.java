@@ -11,7 +11,7 @@ import java.util.regex.Matcher;
 public class Parser {
 
     public static ParsedCommand parse(String line) {
-        String firstWord = line.split(" ")[0];
+        String firstWord = line.split("\\s+|\\(")[0];
         CommandDefinition commandDefinition = CommandRegistry.getCommandDefinition(firstWord);
 
         if (commandDefinition == null) return new ParsedCommand(firstWord, Collections.emptyList(), "Comando \"" + firstWord + "\" não encontrado");
