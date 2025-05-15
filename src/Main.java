@@ -32,7 +32,9 @@ public class Main {
                 break;
             }
 
-            commandDefinition.getCommand().execute(parsedCommand.getArgs(), store);
+            boolean err = commandDefinition.getCommand().execute(parsedCommand.getArgs(), store);
+
+            if (err) break;
         }
     }
 }
