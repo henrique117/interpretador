@@ -1,5 +1,6 @@
 package interpreter;
 
+import commands.ChangeVariable;
 import commands.Print;
 import commands.Set;
 import interfaces.ICommand;
@@ -15,6 +16,7 @@ public class CommandRegistry {
     static {
         register("set", "^set\\s+([a-zA-Z_]\\w*)\\s*=\\s*(.+)$", new Set(), new Set());
         register("print", "^print\\s*\\(\\s*(.+?)\\s*\\)$", new Print(), new Print());
+        register("changevar", "^\\s*([a-zA-Z_]\\w*)\\s*=\\s*(.+)", new ChangeVariable(), new ChangeVariable());
     }
 
     private static void register(String name, String regex, ICommand command, IArgumentExtractor extractor) {

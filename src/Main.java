@@ -18,7 +18,7 @@ public class Main {
 
             if (line.isEmpty() || line.startsWith("#")) continue;
 
-            ParsedCommand parsedCommand = Parser.parse(line);
+            ParsedCommand parsedCommand = Parser.parse(line, store);
 
             if (parsedCommand.hasError()) {
                 System.err.println("Erro: " + parsedCommand.getError());
