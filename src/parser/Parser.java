@@ -24,6 +24,7 @@ public class Parser {
         if (commandDefinition == null && store.exists(firstWord))
             commandDefinition = CommandRegistry.getCommandDefinition("changevar");
 
+        assert commandDefinition != null;
         Matcher matcher = commandDefinition.getPattern().matcher(line);
 
         if (!matcher.matches())

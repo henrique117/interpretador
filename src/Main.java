@@ -9,14 +9,18 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
+        
         VariableStore store = new VariableStore();
-
+        int lineNumber = 1;
         List<String> program = FileReader.readFile("program");
 
         for (String line : program) {
             line = line.trim();
 
-            if (line.isEmpty() || line.startsWith("#")) continue;
+            if (line.isEmpty() || line.startsWith("#")) {
+                lineNumber++;
+                continue;
+            }
 
             ParsedCommand parsedCommand = Parser.parse(line, store);
 
@@ -35,9 +39,11 @@ public class Main {
             String err = commandDefinition.getCommand().execute(parsedCommand.getArgs(), store);
 
             if (err != null) {
-                System.err.println("Error: " + err);
+                System.err.println("Error on line " + lineNumber + ": " + err);
                 break;
             }
+
+            lineNumber++;
         }
     }
 }

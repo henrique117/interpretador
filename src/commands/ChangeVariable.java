@@ -7,6 +7,7 @@ import interfaces.IArgumentExtractor;
 import interfaces.ICommand;
 import interpreter.Variable;
 import interpreter.VariableStore;
+import utils.Errors;
 
 public class ChangeVariable implements ICommand, IArgumentExtractor{
 
@@ -19,7 +20,7 @@ public class ChangeVariable implements ICommand, IArgumentExtractor{
     public String execute(List<String> args, VariableStore variables) {
 
         if (!variables.exists(args.getFirst())) {
-            return "Variable \"" + args.getFirst() + "\" does not exists";
+            return Errors.variableNotFound(args.getFirst());
         }
 
         variables.set(args.get(0), Variable.fromString(args.get(1)));

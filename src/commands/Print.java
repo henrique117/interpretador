@@ -4,6 +4,7 @@ import interfaces.ICommand;
 import interfaces.IArgumentExtractor;
 import interpreter.Variable;
 import interpreter.VariableStore;
+import utils.Errors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ public class Print implements ICommand, IArgumentExtractor {
                 Variable variable = store.get(arg);
 
                 if (variable == null) {
-                    return "Variable \"" + arg + "\" not found.";
+                    return Errors.variableNotFound(arg);
                 }
 
                 output.append(variable.value);

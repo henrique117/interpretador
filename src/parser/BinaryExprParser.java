@@ -35,7 +35,7 @@ public class BinaryExprParser {
         IExpr expr = factor();
 
         while (check("*") || check("/")) {
-            String operator = getCurrent(); // salva o operador
+            String operator = getCurrent();
             gotoNext();
             IExpr right = factor();
             expr = new BinaryExpr(expr, operator, right);
@@ -47,18 +47,18 @@ public class BinaryExprParser {
     private IExpr factor() {
         if (match("(")) {
             IExpr expr = expression();
-            if (!match(")")) throw new RuntimeException("Parêntese não fechado");
+            if (!match(")")) throw new RuntimeException("Unclosed parenthesis");
             return expr;
         }
 
         String current = getCurrent();
 
-        if (current.matches("-?\\d+(\\.\\d+)?")) { // aceita inteiros e floats
+        if (current.matches("-?\\d+(\\.\\d+)?")) {
             gotoNext();
             return new Literal(current);
         }
 
-        throw new RuntimeException("Token inesperado: " + current);
+        throw new RuntimeException("Unexpected token: " + current);
     }
 
     private String getCurrent() {

@@ -10,7 +10,7 @@ public class FileReader {
 
         } catch (IOException err) {
 
-            System.out.println("Error on reading message: " + err.getMessage());
+            System.out.println("Error on reading file: " + err.getMessage());
             return java.util.Collections.emptyList();
 
         }
