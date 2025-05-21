@@ -1,5 +1,5 @@
-set c = 10 + 2 * 2
+set feio = 20
 
-c = 10 * 2
+feio = 20 * (3.5 + 54)
 
-print("a", "b ", c)
+print(feio)
