@@ -18,23 +18,26 @@ public class Main {
 
             if (line.isEmpty() || line.startsWith("#")) continue;
 
-            ParsedCommand parsedCommand = Parser.parse(line);
+            ParsedCommand parsedCommand = Parser.parse(line, store);
 
             if (parsedCommand.hasError()) {
-                System.err.println("Erro: " + parsedCommand.getError());
+                System.err.println("Error: " + parsedCommand.getError());
                 break;
             }
 
             CommandDefinition commandDefinition = CommandRegistry.getCommandDefinition(parsedCommand.getName());
 
             if (commandDefinition == null) {
-                System.err.println("Erro: O comando \"" + parsedCommand.getName() + "\" não existe");
+                System.err.println("Erro: The command \"" + parsedCommand.getName() + "\" doesn't exist");
                 break;
             }
 
-            boolean err = commandDefinition.getCommand().execute(parsedCommand.getArgs(), store);
+            String err = commandDefinition.getCommand().execute(parsedCommand.getArgs(), store);
 
-            if (err) break;
+            if (err != null) {
+                System.err.println("Error: " + err);
+                break;
+            }
         }
     }
 }

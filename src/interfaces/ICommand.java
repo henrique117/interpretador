@@ -6,5 +6,5 @@ import interpreter.VariableStore;
 
 @FunctionalInterface
 public interface ICommand {
-    boolean execute(List<String> args, VariableStore variables);
+    String execute(List<String> args, VariableStore variables);
 }
