@@ -18,10 +18,10 @@ public class Print implements ICommand, IArgumentExtractor {
         String rawArgs = matcher.group(1);
         List<String> args = new ArrayList<>();
 
-        Matcher argMatcher = Pattern.compile("(\"[^\"]*\")|([^,\\s]+)").matcher(rawArgs);
+        Matcher argMatcher = Pattern.compile("\"([^\"]*)\"|([^,\\s]+)").matcher(rawArgs);
         while (argMatcher.find()) {
             if (argMatcher.group(1) != null) {
-                args.add(argMatcher.group(1));
+                args.add("\"" + argMatcher.group(1) + "\"");
             } else {
                 args.add(argMatcher.group(2));
             }
@@ -29,7 +29,6 @@ public class Print implements ICommand, IArgumentExtractor {
 
         return args;
     }
-
 
     @Override
     public String execute(List<String> args, VariableStore store) {
@@ -49,7 +48,7 @@ public class Print implements ICommand, IArgumentExtractor {
 
                 output.append(variable.value);
             } else {
-                return "Invalid argument \"" + arg + "\"";
+                return "Invalid argument in print: \"" + arg + "\"";
             }
         }
 

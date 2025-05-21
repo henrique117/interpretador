@@ -9,7 +9,7 @@ import interpreter.Variable;
 import interpreter.VariableStore;
 import utils.Errors;
 
-public class ChangeVariable implements ICommand, IArgumentExtractor{
+public class ChangeVariable implements ICommand, IArgumentExtractor {
 
     @Override
     public List<String> extract(Matcher matcher) {
@@ -18,12 +18,18 @@ public class ChangeVariable implements ICommand, IArgumentExtractor{
 
     @Override
     public String execute(List<String> args, VariableStore variables) {
-
-        if (!variables.exists(args.getFirst())) {
-            return Errors.variableNotFound(args.getFirst());
+        if (args.size() != 2) {
+            return "ChangeVariable command expects 2 arguments.";
         }
 
-        variables.set(args.get(0), Variable.fromString(args.get(1)));
+        String varName = args.get(0);
+        String newValue = args.get(1);
+
+        if (!variables.exists(varName)) {
+            return Errors.variableNotFound(varName);
+        }
+
+        variables.set(varName, Variable.fromString(newValue));
         return null;
     }
 }

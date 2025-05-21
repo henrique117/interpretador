@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 import interfaces.IExpr;
+import utils.Result;
 
 public class Parser {
 
@@ -33,22 +34,37 @@ public class Parser {
         List<String> args = new ArrayList<>(commandDefinition.getExtractor().extract(matcher));
 
         if ((firstWord.equals("set") && args.size() == 2) || (commandDefinition.getName().equals("changevar") && args.size() == 2)) {
-            args = parseBinExpr(args);
+            Result<List<String>> result = parseBinExpr(args, store);
+            if (!result.isOk()) {
+                return new ParsedCommand(firstWord, args, result.getError());
+            }
+            args = result.getValue();
         }
 
         return new ParsedCommand(commandDefinition.getName(), args);
     }
 
-    private static List<String> parseBinExpr(List<String> args) {
+    private static Result<List<String>> parseBinExpr(List<String> args, VariableStore variableStore) {
         List<String> exprTokens = Lexer.tokenize(args.get(1));
-        BinaryExprParser binParser = new BinaryExprParser(exprTokens);
+        BinaryExprParser binParser = new BinaryExprParser(exprTokens, variableStore);
 
-        IExpr expr = binParser.parse();
-        double evalResult = ((Number) expr.evaluate()).doubleValue();
-        String evaluatedValue = evalResult % 1 == 0 ? Long.toString(Math.round(evalResult)) : Double.toString(evalResult);
+        Result<IExpr> exprResult = binParser.parse();
+        if (!exprResult.isOk()) return Result.error(exprResult.getError());
+
+        Result<Object> evalResult = exprResult.getValue().evaluate();
+        if (!evalResult.isOk()) return Result.error(evalResult.getError());
+
+        Object value = evalResult.getValue();
+        String evaluatedValue;
+
+        if (value instanceof Number num) {
+            double val = num.doubleValue();
+            evaluatedValue = val % 1 == 0 ? Long.toString(Math.round(val)) : Double.toString(val);
+        } else {
+            evaluatedValue = value.toString();
+        }
 
         args.set(1, evaluatedValue);
-
-        return args;
+        return Result.ok(args);
     }
 }

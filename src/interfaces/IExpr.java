@@ -1,5 +1,7 @@
 package interfaces;
 
+import utils.Result;
+
 public interface IExpr {
-    Object evaluate();
+    Result<Object> evaluate();
 }

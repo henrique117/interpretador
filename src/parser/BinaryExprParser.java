@@ -3,62 +3,86 @@ package parser;
 import java.util.List;
 
 import interfaces.IExpr;
+import interpreter.Variable;
+import interpreter.VariableStore;
+import utils.Errors;
+import utils.Result;
 
 public class BinaryExprParser {
 
     private final List<String> tokens;
     private int index;
+    private final VariableStore variableStore;
 
-    public BinaryExprParser(List<String> tokens) {
+    public BinaryExprParser(List<String> tokens, VariableStore variableStore) {
         this.tokens = tokens;
         this.index = 0;
+        this.variableStore = variableStore;
     }
 
-    public IExpr parse() {
+    public Result<IExpr> parse() {
         return expression();
     }
 
-    private IExpr expression() {
-        IExpr expr = term();
+    private Result<IExpr> expression() {
+        Result<IExpr> exprResult = term();
+        if (!exprResult.isOk()) return exprResult;
+        IExpr expr = exprResult.getValue();
 
         while (check("+") || check("-")) {
             String operator = getCurrent();
             gotoNext();
-            IExpr right = term();
-            expr = new BinaryExpr(expr, operator, right);
+            Result<IExpr> rightResult = term();
+            if (!rightResult.isOk()) return rightResult;
+            expr = new BinaryExpr(expr, operator, rightResult.getValue());
         }
 
-        return expr;
+        return Result.ok(expr);
     }
 
-    private IExpr term() {
-        IExpr expr = factor();
+    private Result<IExpr> term() {
+        Result<IExpr> exprResult = factor();
+        if (!exprResult.isOk()) return exprResult;
+        IExpr expr = exprResult.getValue();
 
         while (check("*") || check("/")) {
             String operator = getCurrent();
             gotoNext();
-            IExpr right = factor();
-            expr = new BinaryExpr(expr, operator, right);
+            Result<IExpr> rightResult = factor();
+            if (!rightResult.isOk()) return rightResult;
+            expr = new BinaryExpr(expr, operator, rightResult.getValue());
         }
 
-        return expr;
+        return Result.ok(expr);
     }
 
-    private IExpr factor() {
+    private Result<IExpr> factor() {
         if (match("(")) {
-            IExpr expr = expression();
-            if (!match(")")) throw new RuntimeException("Unclosed parenthesis");
-            return expr;
+            Result<IExpr> exprResult = expression();
+            if (!exprResult.isOk()) return exprResult;
+            if (!match(")")) return Result.error("Unclosed parenthesis");
+            return exprResult;
         }
 
         String current = getCurrent();
 
         if (current.matches("-?\\d+(\\.\\d+)?")) {
             gotoNext();
-            return new Literal(current);
+            return Result.ok(new Literal(current));
         }
 
-        throw new RuntimeException("Unexpected token: " + current);
+        if (current.matches("-?[A-Za-z]+.*")) {
+            Variable var = variableStore.get(current.trim());
+
+            if (var == null) {
+                return Result.error(Errors.variableNotFound(current.trim()));
+            }
+
+            gotoNext();
+            return Result.ok(new Literal(var.value.toString()));
+        }
+
+        return Result.error("Unexpected token: " + current);
     }
 
     private String getCurrent() {

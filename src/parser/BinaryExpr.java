@@ -1,6 +1,7 @@
 package parser;
 
 import interfaces.IExpr;
+import utils.Result;
 
 public class BinaryExpr implements IExpr {
     private final IExpr left;
@@ -14,24 +15,29 @@ public class BinaryExpr implements IExpr {
     }
 
     @Override
-    public Object evaluate() {
-        Object leftVal = left.evaluate();
-        Object rightVal = right.evaluate();
+    public Result<Object> evaluate() {
+        Result<Object> leftResult = left.evaluate();
+        if (!leftResult.isOk()) return leftResult;
+
+        Result<Object> rightResult = right.evaluate();
+        if (!rightResult.isOk()) return rightResult;
+
+        Object leftVal = leftResult.getValue();
+        Object rightVal = rightResult.getValue();
 
         if (leftVal instanceof Number && rightVal instanceof Number) {
             double l = ((Number) leftVal).doubleValue();
             double r = ((Number) rightVal).doubleValue();
 
-            switch (operator) {
-                case "+": return l + r;
-                case "-": return l - r;
-                case "*": return l * r;
-                case "/": return l / r;
-                default:
-                    throw new UnsupportedOperationException("Operator '" + operator + "' is not supported");
-            }
+            return switch (operator) {
+                case "+" -> Result.ok(l + r);
+                case "-" -> Result.ok(l - r);
+                case "*" -> Result.ok(l * r);
+                case "/" -> Result.ok(r == 0 ? null : l / r);
+                default -> Result.error("Operator '" + operator + "' is not supported");
+            };
         }
 
-        throw new UnsupportedOperationException("Invalid operation");
+        return Result.error("Invalid operation between non-numeric values");
     }
 }

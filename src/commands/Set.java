@@ -17,6 +17,10 @@ public class Set implements ICommand, IArgumentExtractor {
 
     @Override
     public String execute(List<String> args, VariableStore store) {
+        if (args.size() != 2) {
+            return "Set command expects 2 arguments.";
+        }
+
         String varName = args.getFirst();
         String rawValue = args.getLast();
 

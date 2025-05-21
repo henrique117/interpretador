@@ -9,7 +9,6 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-        
         VariableStore store = new VariableStore();
         int lineNumber = 1;
         List<String> program = FileReader.readFile("program");
@@ -25,14 +24,14 @@ public class Main {
             ParsedCommand parsedCommand = Parser.parse(line, store);
 
             if (parsedCommand.hasError()) {
-                System.err.println("Error: " + parsedCommand.getError());
+                System.err.println("Error on line " + lineNumber + ": " + parsedCommand.getError());
                 break;
             }
 
             CommandDefinition commandDefinition = CommandRegistry.getCommandDefinition(parsedCommand.getName());
 
             if (commandDefinition == null) {
-                System.err.println("Erro: The command \"" + parsedCommand.getName() + "\" doesn't exist");
+                System.err.println("Error on line " + lineNumber + ": The command \"" + parsedCommand.getName() + "\" doesn't exist");
                 break;
             }
 
