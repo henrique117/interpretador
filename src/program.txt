@@ -1,9 +1,1 @@
-set c = 10
-
-c = 2 + 2
-
-set d = c + c
-
-
-
-print("Hello, World: ", d)
+"abracadabra" 17 abc
