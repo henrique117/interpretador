@@ -29,6 +29,8 @@ public class Lexer {
         keywords.put("print", TokenType.PRINT);
         keywords.put("true", TokenType.BOOLEAN);
         keywords.put("false", TokenType.BOOLEAN);
+        keywords.put("and", TokenType.AND);
+        keywords.put("or", TokenType.OR);
     }
 
     public List<Token> tokenize() {
@@ -106,6 +108,14 @@ public class Lexer {
                 } else {
                     addToken(TokenType.LESS, "<");
                 }
+                break;
+
+            case '&':
+                if (match('&')) addToken(TokenType.AND, "&&");
+                break;
+
+            case '|':
+                if (match('|')) addToken(TokenType.OR, "||");
                 break;
         
             default:

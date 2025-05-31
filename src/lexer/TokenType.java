@@ -34,6 +34,8 @@ public enum TokenType {
     GREATER_EQUAL,
     LESS,
     LESS_EQUAL,
+    AND,
+    OR,
 
     PLUS,
     MINUS,
