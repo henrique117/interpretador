@@ -44,6 +44,8 @@ public enum TokenType {
     DIV,
     POWER_OF,
     MODULE,
+    PLUS_PLUS,
+    MINUS_MINUS,
 
     EOF
 }

@@ -55,8 +55,6 @@ public class Lexer {
             case '[': addToken(TokenType.LEFT_BRACKET); break;
             case ']': addToken(TokenType.RIGHT_BRACKET); break;
             case ',': addToken(TokenType.COMMA); break;
-            case '+': addToken(TokenType.PLUS); break;
-            case '-': addToken(TokenType.MINUS); break;
             case '/': addToken(TokenType.DIV); break;
             case '%': addToken(TokenType.MODULE); break;
             case ' ': break;
@@ -116,6 +114,22 @@ public class Lexer {
                     addToken(TokenType.POWER_OF, "**");
                 } else {
                     addToken(TokenType.MULT, "*");
+                }
+                break;
+
+            case '+':
+                if (match('+')) {
+                    addToken(TokenType.PLUS_PLUS, "++");
+                } else {
+                    addToken(TokenType.PLUS, "+");
+                }
+                break;
+
+            case '-':
+                if (match('-')) {
+                    addToken(TokenType.MINUS_MINUS, "--");
+                } else {
+                    addToken(TokenType.MINUS, "-");
                 }
                 break;
 

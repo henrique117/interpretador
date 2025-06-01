@@ -41,6 +41,12 @@ public class AstPrinter implements ExprVisitor<String> {
         return expr.name.getTokenValue();
     }
 
+    @Override
+    public String visitPostfixExpr(PostfixExpr expr) {
+        // Adiciona "post" antes do operador para deixar claro que é pós-fixado
+        return parenthesize("post " + expr.operator.getTokenValue(), expr.target);
+    }
+
     private String parenthesize(String name, Expr... exprs) {
         StringBuilder builder = new StringBuilder();
         builder.append("(").append(name);

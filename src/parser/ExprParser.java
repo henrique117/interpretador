@@ -160,17 +160,28 @@ public class ExprParser {
     }
 
     /**
-     * Expressões unárias: !, -.
+     * Expressões unárias: !, -, ++, --.
      */
     private Expr unary() {
-        if (matchTypes(TokenType.MINUS, TokenType.NOT)) {
+        
+        // Prefixado: -x, !x, ++i, --i
+        if (matchTypes(TokenType.MINUS, TokenType.NOT, TokenType.PLUS_PLUS, TokenType.MINUS_MINUS)) {
             Token operator = previous();
-            Expr right = unary();
+            Expr right = unary(); // Recursivamente resolve o que vem depois
             return new UnaryExpr(operator, right);
         }
 
-        return primary();
+        Expr expr = primary(); // Agora chama primary se não for prefixo
+
+        // Pós-fixado: i++ ou i--
+        if (matchTypes(TokenType.PLUS_PLUS, TokenType.MINUS_MINUS)) {
+            Token operator = previous();
+            expr = new PostfixExpr(expr, operator);
+        }
+
+        return expr;
     }
+
 
     /**
      * Tokens primários: Números, Strings e Booleanos.

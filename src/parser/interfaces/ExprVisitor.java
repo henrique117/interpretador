@@ -1,11 +1,6 @@
 package parser.interfaces;
 
-import parser.ast.BinaryExpr;
-import parser.ast.GroupingExpr;
-import parser.ast.LiteralExpr;
-import parser.ast.LogicalExpr;
-import parser.ast.UnaryExpr;
-import parser.ast.VariableExpr;
+import parser.ast.*;
 
 public interface ExprVisitor<T> {
     T visitBinaryExpr(BinaryExpr expr);
@@ -14,4 +9,5 @@ public interface ExprVisitor<T> {
     T visitLogicalExpr(LogicalExpr expr);
     T visitUnaryExpr(UnaryExpr expr);
     T visitVariableExpr(VariableExpr expr);
+    T visitPostfixExpr(PostfixExpr postfixExpr);
 }

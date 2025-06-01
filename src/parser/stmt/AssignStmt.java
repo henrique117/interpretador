@@ -5,18 +5,18 @@ import parser.interfaces.Expr;
 import parser.interfaces.Stmt;
 import parser.interfaces.StmtVisitor;
 
-public class SetStmt implements Stmt {
-    
-    public final Token name;
-    public final Expr initializer;
+public class AssignStmt implements Stmt {
 
-    public SetStmt(Token name, Expr initializer) {
+    public final Token name;
+    public final Expr value;
+
+    public AssignStmt(Token name, Expr value) {
         this.name = name;
-        this.initializer = initializer;
+        this.value = value;
     }
 
     @Override
     public <T> T accept(StmtVisitor<T> visitor) {
-        return visitor.visitSetStmt(this);
+        return visitor.visitAssignStmt(this);
     }
 }
