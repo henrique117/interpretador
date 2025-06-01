@@ -4,7 +4,8 @@ public enum TokenType {
     IDENTIFIER,
     NUMBER,
     STRING,
-    BOOLEAN,
+    TRUE,
+    FALSE,
 
     LEFT_PAREN,
     RIGHT_PAREN,
@@ -42,5 +43,7 @@ public enum TokenType {
     MULT,
     DIV,
     POWER_OF,
-    MODULE
+    MODULE,
+
+    EOF
 }

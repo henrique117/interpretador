@@ -27,8 +27,8 @@ public class Lexer {
         keywords.put("for", TokenType.FOR);
         keywords.put("set", TokenType.SET);
         keywords.put("print", TokenType.PRINT);
-        keywords.put("true", TokenType.BOOLEAN);
-        keywords.put("false", TokenType.BOOLEAN);
+        keywords.put("true", TokenType.TRUE);
+        keywords.put("false", TokenType.FALSE);
         keywords.put("and", TokenType.AND);
         keywords.put("or", TokenType.OR);
     }
@@ -38,6 +38,8 @@ public class Lexer {
         while (!isAtEnd()) {
             scanToken();
         }
+
+        addToken(TokenType.EOF, "eof", caracter);
 
         return tokens;
     }
@@ -124,6 +126,8 @@ public class Lexer {
                 break;
         }
     }
+
+    // Helpers
 
     // Métodos Booleanos
 
