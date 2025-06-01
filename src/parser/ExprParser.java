@@ -19,8 +19,13 @@ public class ExprParser {
 
     public Expr parse() {
         try {
-            return expression();
+            Expr expr = expression();
+            if (!isAtEnd()) {
+                throw error(peek(), "Token '" + peek().getTokenValue() + "' inesperado após término da expressão.");
+            }
+            return expr;
         } catch (ParseError err) {
+            System.err.println(err.getMessage());
             return null;
         }
     }
@@ -37,7 +42,8 @@ public class ExprParser {
     equality -> comparision | comparision == comparision | comparision != comparision
     comparision -> term | term > term | term >= term | term < term | term >= term
     term -> factor | factor + factor | factor - factor
-    factor -> unary | unary * unary | unary / unary | unary % unary
+    factor -> power | power * power | power / power | power % power
+    power -> unary | unary ** unary
     unary -> primary | !primary | -primary
     primary -> TRUE | FALSE | NUMBER | STRING | IDENTIFIER | (grouping)
     grouping -> expression
@@ -127,11 +133,26 @@ public class ExprParser {
      * Expressões de fatores: /, *, %.
      */
     private Expr factor() {
-        Expr expr = unary();
+        Expr expr = power();
 
         while (matchTypes(TokenType.MULT, TokenType.DIV, TokenType.MODULE)) {
             Token operator = previous();
-            Expr right = unary();
+            Expr right = power();
+            expr = new BinaryExpr(expr, operator, right);
+        }
+
+        return expr;
+    }
+
+    /**
+     * Expressões de potência: **.
+     */
+    private Expr power() {
+        Expr expr = unary();
+
+        if (matchTypes(TokenType.POWER_OF)) {
+            Token operator = previous();
+            Expr right = power();
             expr = new BinaryExpr(expr, operator, right);
         }
 
@@ -155,6 +176,10 @@ public class ExprParser {
      * Tokens primários: Números, Strings e Booleanos.
      */
     private Expr primary() {
+        if (matchTypes(TokenType.RIGHT_PAREN)) {
+            throw error(previous(), "Parêntese ')' fechado sem abertura.");
+        }
+
         if (matchTypes(TokenType.TRUE)) return new LiteralExpr(true);
         if (matchTypes(TokenType.FALSE)) return new LiteralExpr(false);
         if (matchTypes(TokenType.NUMBER)) return new LiteralExpr(Double.parseDouble(previous().getTokenValue()));

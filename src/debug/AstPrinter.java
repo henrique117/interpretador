@@ -7,7 +7,8 @@ import parser.interfaces.ExprVisitor;
 public class AstPrinter implements ExprVisitor<String> {
 
     public String print(Expr expr) {
-        return expr.accept(this);
+        if(expr != null) return expr.accept(this);
+        return "Árvore teve um erro na sua construção";
     }
 
     @Override
@@ -37,7 +38,7 @@ public class AstPrinter implements ExprVisitor<String> {
 
     @Override
     public String visitVariableExpr(VariableExpr expr) {
-        return expr.name.value;
+        return expr.name.getTokenValue();
     }
 
     private String parenthesize(String name, Expr... exprs) {
