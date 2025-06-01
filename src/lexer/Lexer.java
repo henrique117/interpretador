@@ -55,6 +55,7 @@ public class Lexer {
             case '[': addToken(TokenType.LEFT_BRACKET); break;
             case ']': addToken(TokenType.RIGHT_BRACKET); break;
             case ',': addToken(TokenType.COMMA); break;
+            case ';': addToken(TokenType.SEMI_COLUMN); break;
             case '/': addToken(TokenType.DIV); break;
             case '%': addToken(TokenType.MODULE); break;
             case ' ': break;

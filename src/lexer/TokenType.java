@@ -27,6 +27,7 @@ public enum TokenType {
     EQUAL,
     DOUBLE_QUOTES,
     SINGLE_QUOTES,
+    SEMI_COLUMN,
 
     NOT,
     EQUAL_EQUAL,
