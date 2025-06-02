@@ -7,14 +7,10 @@ import lexer.TokenType;
 import parser.ast.*;
 import parser.interfaces.Expr;
 
-public class ExprParser {
-    
-    private final List<Token> tokens;
-    private int current;
+public class ExprParser extends Parser {
 
     public ExprParser(List<Token> tokens) {
-        this.tokens = tokens;
-        current = 0;
+        super(tokens);
     }
 
     public Expr parse() {
@@ -25,12 +21,9 @@ public class ExprParser {
             }
             return expr;
         } catch (ParseError err) {
-            System.err.println(err.getMessage());
-            return null;
+            throw error(peek(), err.getMessage());
         }
     }
-
-    // Recursão de Expressões para formação da AST em ordem de prioridade
 
     /* 
 
@@ -49,6 +42,8 @@ public class ExprParser {
     grouping -> expression
 
     */
+
+    // Recursão de Expressões para formação da AST em ordem de prioridade
 
     private Expr expression() {
         return or();
@@ -163,7 +158,7 @@ public class ExprParser {
      * Expressões unárias: !, -, ++, --.
      */
     private Expr unary() {
-        
+
         // Prefixado: -x, !x, ++i, --i
         if (matchTypes(TokenType.MINUS, TokenType.NOT, TokenType.PLUS_PLUS, TokenType.MINUS_MINUS)) {
             Token operator = previous();
@@ -187,15 +182,15 @@ public class ExprParser {
      * Tokens primários: Números, Strings e Booleanos.
      */
     private Expr primary() {
-        if (matchTypes(TokenType.RIGHT_PAREN)) {
-            throw error(previous(), "Parêntese ')' fechado sem abertura.");
-        }
-
         if (matchTypes(TokenType.TRUE)) return new LiteralExpr(true);
         if (matchTypes(TokenType.FALSE)) return new LiteralExpr(false);
         if (matchTypes(TokenType.NUMBER)) return new LiteralExpr(Double.parseDouble(previous().getTokenValue()));
         if (matchTypes(TokenType.STRING)) return new LiteralExpr(previous().getTokenValue());
         if (matchTypes(TokenType.IDENTIFIER)) return new VariableExpr(previous());
+
+        if (matchTypes(TokenType.RIGHT_PAREN)) {
+            if (checkBalance(TokenType.LEFT_PAREN, current)) throw error(previous(), "Parêntese ')' fechado sem abertura.");
+        }
 
         if(matchTypes(TokenType.LEFT_PAREN)) {
             Expr expr = expression();
@@ -204,96 +199,5 @@ public class ExprParser {
         }
 
         throw error(peek(), "Esperado expressão.");
-    }
-
-    // Helpers
-
-    // Métodos Booleanos
-
-    /**
-     * 
-     * @return Se está no final do programa.
-     */
-    private boolean isAtEnd() {
-        return peek().getTokenType() == TokenType.EOF;
-    }
-
-    /**
-     * 
-     * @param expected TokenType esperado.
-     * @return Se é o TokenType esperado.
-     */
-    private boolean checkTokenType(TokenType expected) {
-        if (isAtEnd()) return false;
-        return peek().getTokenType() == expected;
-    }
-
-    /**
-     * 
-     * @param types Tipo para iteração.
-     * @return Enquanto estiver lendo esse tipo.
-     */
-    private boolean matchTypes(TokenType... types) {
-        for (TokenType tokenType : types) {
-            if (checkTokenType(tokenType)) {
-                advance();
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    // Métodos Token
-
-    /**
-     * 
-     * @return o token atual.
-     */
-    private Token peek() {
-        return tokens.get(current);
-    }
-
-    /**
-     * Vai para o próximo token.
-     * 
-     * @return O úlitimo (Se ele nao puder avançar retorna o EOF).
-     */
-    private Token advance() {
-        if (isAtEnd()) return peek();
-        current++;
-        return previous();
-    }
-
-    /**
-     * 
-     * @return O último token.
-     */
-    private Token previous() {
-        return tokens.get(current - 1);
-    }
-
-    /**
-     * 
-     * @param type TokeType do token a ser consumido.
-     * @param errMessage Mensagem de erro.
-     * @return O token consumido.
-     */
-    private Token consume(TokenType type, String errMessage) {
-        if (checkTokenType(type)) return advance();
-        throw error(peek(), errMessage);
-    }
-
-    // Tratamento de erro
-
-    /**
-     * Joga um erro no sistema.
-     * 
-     * @param token Token que foi achado o erro.
-     * @param errMessage Mensagem de erro.
-     * @return Erro.
-     */
-    private ParseError error(Token token, String errMessage) {
-        throw new ParseError("Erro em linha: " + token.getTokenLine() + ":" + token.getTokenCaracter() + ": " + errMessage);
     }
 }
